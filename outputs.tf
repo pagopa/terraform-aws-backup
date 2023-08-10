@@ -9,7 +9,7 @@ output "backup_vault_arn" {
 }
 
 output "backup_plan_arn" {
-  value       = join("", aws_backup_plan.backup_plan.*.arn)
+  value       = join(" ", aws_backup_plan.backup_plan.*.arn)
   description = "Backup Plan ARN"
 }
 
