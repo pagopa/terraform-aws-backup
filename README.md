@@ -1,6 +1,50 @@
 # AWS Backup Terraform module
 
-Terraform module which creates Backup resources on AWS.
+Terraform module which creates Backup resources on AWS:
+* Backup vault.
+* Backup vault lock.
+* KMS key per vault.
+* Backup plan.
+* Backup selection (mainly tag).
+
+## Usage
+
+Backup all resources that have **tag** __DataClassification__ equals to __PII customer data__.
+
+One daily rule starts every day at 2:00 PM UTC and deletes each snapshot older than 14 days.
+
+The **default rule** instead starts daily at 5:00 AM UTC with no expiration. 
+
+
+
+```hcl
+module "aws_backup" {
+  source       = "../../"
+  name         = "backup"
+  iam_role_arn = aws_iam_role.example.arn
+
+  selection_tag = {
+    key   = "DataClassification"
+    value = "PII customer data"
+  }
+
+  enable_vault_lock_governance = false
+
+  backup_rule = [{
+    rule_name         = "backup_daily_rule"
+    schedule          = "cron(0 14 * * ? *)"
+    start_window      = 60
+    completion_window = 140
+    lifecycle = {
+      delete_after = 14
+    }
+    },
+    {
+      rule_name = "backup_default_rule"
+    }
+  ]
+}
+```
 
 
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
