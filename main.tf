@@ -8,8 +8,8 @@ data "aws_iam_policy_document" "kms_key_policy" {
   statement {
     sid    = "Enable IAM User Permissions"
     effect = "Allow"
-    #todo definire chi deve amministrare la key.
-    #Proposta: Admin del backup è l'unico a poter gestire queste chiavi.
+    #todo: define who can administer the key
+    #proposal: admin backup.
 
     principals {
       type        = "AWS"
@@ -60,8 +60,6 @@ resource "aws_backup_vault_lock_configuration" "vault_lock" {
   count             = var.enable_vault_lock_governance ? 1 : 0
   backup_vault_name = aws_backup_vault.vault.name
 }
-
-
 
 resource "aws_backup_plan" "backup_plan" {
   name = "${var.name}-plan-${random_id.salt.hex}"
