@@ -16,10 +16,9 @@ One daily rule starts every day at 2:00 PM UTC and deletes each snapshot older t
 The **default rule** instead starts daily at 5:00 AM UTC with no expiration. 
 
 
-
 ```hcl
 module "aws_backup" {
-  source       = "../../"
+  source       = "git::https://github.com/pagopa/terraform-aws-backup.git?ref=v1.0.0"
   name         = "backup"
   iam_role_arn = aws_iam_role.example.arn
 
@@ -45,7 +44,6 @@ module "aws_backup" {
   ]
 }
 ```
-
 
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ## Requirements
