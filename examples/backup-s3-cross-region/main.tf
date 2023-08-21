@@ -141,7 +141,7 @@ module "aws_backup_copy" {
   iam_role_arn = aws_iam_role.example.arn
 
   providers = {
-    aws = aws.eu-south-1
+    aws = aws.eu-west-1
   }
 
   selection_tag = null
@@ -172,13 +172,14 @@ module "aws_backup" {
       delete_after = 14
     }
 
+    /*
     copy_action = {
       destination_vault_arn = module.aws_backup_copy.backup_vault_arn
 
       lifecycle = {
         delete_after = 30
       }
-    }
+    } */
   }]
 }
 

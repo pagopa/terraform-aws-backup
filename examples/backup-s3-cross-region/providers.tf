@@ -16,10 +16,10 @@ terraform {
 
 
 provider "aws" {
-  region = "eu-west-1"
+  region = "eu-central-1"
 }
 
 provider "aws" {
-  alias  = "eu-south-1"
-  region = "eu-south-1"
+  alias  = "eu-west-1"
+  region = "eu-west-1"
 }
