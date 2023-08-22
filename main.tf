@@ -62,6 +62,9 @@ resource "aws_backup_vault_lock_configuration" "vault_lock" {
 }
 
 resource "aws_backup_plan" "backup_plan" {
+
+count = length(var.backup_rule) > 0 ? 1 : 0
+
   name = "${var.name}-plan-${random_id.salt.hex}"
 
   dynamic "rule" {
@@ -84,8 +87,7 @@ resource "aws_backup_plan" "backup_plan" {
       dynamic "copy_action" {
         for_each = try(rule.value.copy_action, null) != null ? ["enabled"] : []
         content {
-          destination_vault_arn = aws_backup_vault.vault.arn
-
+          destination_vault_arn = rule.value.copy_action.destination_vault_arn
           dynamic "lifecycle" {
             for_each = try(rule.value.copy_action.lifecycle, null) != null ? ["enabled"] : []
 
@@ -101,14 +103,14 @@ resource "aws_backup_plan" "backup_plan" {
   tags = var.tags
 }
 resource "aws_backup_selection" "backup_selection" {
+  count = var.selection_tag == null ? 0 : 1
   name         = "${var.name}-backup-selection-${random_id.salt.hex}"
-  plan_id      = aws_backup_plan.backup_plan.id
+  plan_id      = aws_backup_plan.backup_plan[0].id
   iam_role_arn = var.iam_role_arn
 
   selection_tag {
     type  = "STRINGEQUALS"
     key   = var.selection_tag["key"]
     value = var.selection_tag["value"]
-
   }
 }
