@@ -16,8 +16,7 @@ resource "aws_iam_role" "example" {
   })
 }
 
-
-# Required policy to backup the S3 objects.
+# Required policy to backup dynamodb table.
 resource "aws_iam_policy" "example" {
   name        = "dynamodb-backup-policy" # Replace with your desired policy name
   description = "Policy for AWS Backup to backup Dynamodb table."
