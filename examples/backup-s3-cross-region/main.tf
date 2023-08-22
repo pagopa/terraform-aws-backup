@@ -6,7 +6,7 @@ resource "aws_s3_bucket" "example" {
   bucket = format("bucket2backup-%04s", random_integer.bucket_suffix.result)
 
   tags = {
-    Name               = "S3 Remote Terraform State Store"
+    Name               = "Customer list"
     DataClassification = "PII customer data"
   }
 }
