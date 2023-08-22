@@ -163,8 +163,8 @@ module "aws_backup" {
   enable_vault_lock_governance = false
 
   backup_rule = [{
-    rule_name         = "backup_daily_rule"
-    schedule          = "cron(5 */1 * * ? *)" # every 60 minutes.
+    rule_name         = "backup_evary_hour_rule"
+    schedule          = "cron(5 */1 * * ? *)" 
     start_window      = 60
     completion_window = 140
 
