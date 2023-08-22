@@ -164,7 +164,7 @@ module "aws_backup" {
 
   backup_rule = [{
     rule_name         = "backup_evary_hour_rule"
-    schedule          = "cron(5 */1 * * ? *)" 
+    schedule          = "cron(5 */1 * * ? *)"
     start_window      = 60
     completion_window = 140
 
@@ -172,14 +172,14 @@ module "aws_backup" {
       delete_after = 14
     }
 
-    /*
     copy_action = {
       destination_vault_arn = module.aws_backup_copy.backup_vault_arn
 
       lifecycle = {
-        delete_after = 30
+        cold_storage_after = 30
+        delete_after       = 30
       }
-    } */
+    }
   }]
 }
 

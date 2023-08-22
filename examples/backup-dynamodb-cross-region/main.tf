@@ -175,6 +175,5 @@ module "aws_backup" {
         delete_after       = 120
       }
     }
-
   }]
 }
