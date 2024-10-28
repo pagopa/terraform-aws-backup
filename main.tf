@@ -63,7 +63,7 @@ resource "aws_backup_vault_lock_configuration" "vault_lock" {
 
 resource "aws_backup_plan" "backup_plan" {
 
-count = length(var.backup_rule) > 0 ? 1 : 0
+  count = length(var.backup_rule) > 0 ? 1 : 0
 
   name = "${var.name}-plan-${random_id.salt.hex}"
 
@@ -103,7 +103,7 @@ count = length(var.backup_rule) > 0 ? 1 : 0
   tags = var.tags
 }
 resource "aws_backup_selection" "backup_selection" {
-  count = var.selection_tag == null ? 0 : 1
+  count        = var.selection_tag == null ? 0 : 1
   name         = "${var.name}-backup-selection-${random_id.salt.hex}"
   plan_id      = aws_backup_plan.backup_plan[0].id
   iam_role_arn = var.iam_role_arn
@@ -113,4 +113,48 @@ resource "aws_backup_selection" "backup_selection" {
     key   = var.selection_tag["key"]
     value = var.selection_tag["value"]
   }
+}
+
+
+resource "aws_sns_topic" "backup_vault_events" {
+  count = var.create_sns_topic ? 1 : 0
+  name  = "backup-vault-events"
+}
+
+data "aws_iam_policy_document" "sns_publish" {
+  count     = var.create_sns_topic ? 1 : 0
+  policy_id = "__default_policy_ID"
+
+  statement {
+    actions = [
+      "SNS:Publish",
+    ]
+
+    effect = "Allow"
+
+    principals {
+      type        = "Service"
+      identifiers = ["backup.amazonaws.com"]
+    }
+
+    resources = [
+      aws_sns_topic.backup_vault_events.arn,
+    ]
+
+    sid = "__default_statement_ID"
+  }
+}
+
+resource "aws_sns_topic_policy" "sns_publish" {
+  count  = var.create_sns_topic ? 1 : 0
+  arn    = aws_sns_topic.backup_vault_events.arn
+  policy = data.aws_iam_policy_document.sns_publish.json
+}
+
+
+resource "aws_backup_vault_notifications" "vault_notifications" {
+  count               = var.create_sns_topic ? 1 : 0
+  backup_vault_name   = aws_backup_vault.vault.name
+  sns_topic_arn       = aws_sns_topic.backup_vault_events.arn
+  backup_vault_events = var.backup_vault_events
 }

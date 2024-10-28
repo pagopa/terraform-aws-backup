@@ -17,3 +17,7 @@ output "backup_plan_version" {
   value       = join(" ", aws_backup_plan.backup_plan.*.version)
   description = "Unique, randomly generated, Unicode, UTF-8 encoded string that serves as the version ID of the backup plan"
 }
+
+output "sns_topic_vault_notifications_arn" {
+  value = aws_sns_topic.backup_vault_events.arn
+}
