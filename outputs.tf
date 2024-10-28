@@ -19,5 +19,5 @@ output "backup_plan_version" {
 }
 
 output "sns_topic_vault_notifications_arn" {
-  value = aws_sns_topic.backup_vault_events.arn
+  value = aws_sns_topic.backup_vault_events[0].arn
 }
