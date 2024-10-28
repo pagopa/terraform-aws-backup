@@ -48,9 +48,4 @@ variable "backup_vault_events" {
   type        = list(string)
   description = "An array of events that indicate the status of jobs to back up resources to the backup vault."
   default     = ["BACKUP_JOB_FAILED", "BACKUP_JOB_ABORTED", "BACKUP_JOB_EXPIRED"]
-
-  validation {
-    condition     = var.create_sns_topic == true && length(backup_vault_events) > 0
-    error_message = "backup_vault_events can not be an empty string when you create the topic for the notifications."
-  }
 }
