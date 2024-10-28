@@ -138,7 +138,7 @@ data "aws_iam_policy_document" "sns_publish" {
     }
 
     resources = [
-      aws_sns_topic.backup_vault_events.arn,
+      aws_sns_topic.backup_vault_events[0].arn,
     ]
 
     sid = "__default_statement_ID"
@@ -147,14 +147,14 @@ data "aws_iam_policy_document" "sns_publish" {
 
 resource "aws_sns_topic_policy" "sns_publish" {
   count  = var.create_sns_topic ? 1 : 0
-  arn    = aws_sns_topic.backup_vault_events.arn
-  policy = data.aws_iam_policy_document.sns_publish.json
+  arn    = aws_sns_topic.backup_vault_events[0].arn
+  policy = data.aws_iam_policy_document.sns_publish[0].json
 }
 
 
 resource "aws_backup_vault_notifications" "vault_notifications" {
   count               = var.create_sns_topic ? 1 : 0
   backup_vault_name   = aws_backup_vault.vault.name
-  sns_topic_arn       = aws_sns_topic.backup_vault_events.arn
+  sns_topic_arn       = aws_sns_topic.backup_vault_events[0].arn
   backup_vault_events = var.backup_vault_events
 }
