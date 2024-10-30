@@ -47,5 +47,5 @@ variable "create_sns_topic" {
 variable "backup_vault_events" {
   type        = list(string)
   description = "An array of events that indicate the status of jobs to back up resources to the backup vault."
-  default     = ["BACKUP_JOB_FAILED", "BACKUP_JOB_ABORTED", "BACKUP_JOB_EXPIRED"]
+  default     = ["BACKUP_JOB_FAILED", "BACKUP_JOB_EXPIRED", "S3_BACKUP_OBJECT_FAILED"]
 }
