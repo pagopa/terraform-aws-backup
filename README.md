@@ -1,52 +1,3 @@
-# AWS Backup Terraform module
-
-Terraform module which creates Backup resources on AWS:
-* Backup vault.
-* Backup vault lock.
-* KMS key per vault.
-* Backup plan.
-* Backup selection (mainly tag).
-
-## Usage
-
-Backup all resources that have **tag** __DataClassification__ equals to __PII customer data__.
-
-One daily rule starts every day at 2:00 PM UTC and deletes each snapshot older than 14 days.
-
-The **default rule** instead starts daily at 5:00 AM UTC with no expiration. 
-
-
-```hcl
-module "aws_backup" {
-  source  = "pagopa/backup/aws"
-  version = "1.3.4"
-  name         = "backup"
-  iam_role_arn = aws_iam_role.example.arn
-
-  selection_tag = {
-    key   = "DataClassification"
-    value = "PII customer data"
-  }
-
-  enable_vault_lock_governance = false
-
-  backup_rule = [{
-    rule_name         = "backup_daily_rule"
-    schedule          = "cron(0 14 * * ? *)"
-    start_window      = 60
-    completion_window = 140
-    lifecycle = {
-      delete_after = 14
-    }
-    },
-    {
-      rule_name = "backup_default_rule"
-    }
-  ]
-}
-```
-
-<!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ## Requirements
 
 | Name | Version |
@@ -73,10 +24,14 @@ No modules.
 | [aws_backup_selection.backup_selection](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/backup_selection) | resource |
 | [aws_backup_vault.vault](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/backup_vault) | resource |
 | [aws_backup_vault_lock_configuration.vault_lock](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/backup_vault_lock_configuration) | resource |
+| [aws_backup_vault_notifications.vault_notifications](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/backup_vault_notifications) | resource |
 | [aws_kms_key.kms_key](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/kms_key) | resource |
+| [aws_sns_topic.backup_vault_events](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/sns_topic) | resource |
+| [aws_sns_topic_policy.sns_publish](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/sns_topic_policy) | resource |
 | [random_id.salt](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/id) | resource |
 | [aws_caller_identity.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/caller_identity) | data source |
 | [aws_iam_policy_document.kms_key_policy](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
+| [aws_iam_policy_document.sns_publish](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
 
 ## Inputs
 
@@ -87,6 +42,8 @@ No modules.
 | <a name="input_name"></a> [name](#input\_name) | The name of the supporting resources | `string` | n/a | yes |
 | <a name="input_selection_tag"></a> [selection\_tag](#input\_selection\_tag) | Tag-based conditions used to specify a set of resources to assign to a backup plan. | `map(any)` | n/a | yes |
 | <a name="input_advanced_backup_setting"></a> [advanced\_backup\_setting](#input\_advanced\_backup\_setting) | An object that specifies backup options for each resource type. | `map(string)` | `{}` | no |
+| <a name="input_backup_vault_events"></a> [backup\_vault\_events](#input\_backup\_vault\_events) | An array of events that indicate the status of jobs to back up resources to the backup vault. | `list(string)` | <pre>[<br/>  "BACKUP_JOB_FAILED",<br/>  "BACKUP_JOB_EXPIRED",<br/>  "S3_BACKUP_OBJECT_FAILED"<br/>]</pre> | no |
+| <a name="input_create_sns_topic"></a> [create\_sns\_topic](#input\_create\_sns\_topic) | SNS topic for vault notifications. | `bool` | `false` | no |
 | <a name="input_enable_vault_lock_governance"></a> [enable\_vault\_lock\_governance](#input\_enable\_vault\_lock\_governance) | A variable that allows to enable vault lock in governance mode | `bool` | `false` | no |
 | <a name="input_tags"></a> [tags](#input\_tags) | A map of tags to assign to the resources | `map(string)` | `{}` | no |
 
@@ -98,5 +55,4 @@ No modules.
 | <a name="output_backup_plan_version"></a> [backup\_plan\_version](#output\_backup\_plan\_version) | Unique, randomly generated, Unicode, UTF-8 encoded string that serves as the version ID of the backup plan |
 | <a name="output_backup_vault_arn"></a> [backup\_vault\_arn](#output\_backup\_vault\_arn) | Backup Vault ARN |
 | <a name="output_backup_vault_id"></a> [backup\_vault\_id](#output\_backup\_vault\_id) | Backup Vault ID |
-
-
+| <a name="output_sns_topic_vault_notifications_arn"></a> [sns\_topic\_vault\_notifications\_arn](#output\_sns\_topic\_vault\_notifications\_arn) | n/a |
