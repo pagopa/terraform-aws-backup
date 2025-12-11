@@ -1,3 +1,14 @@
+# terraform-aws-backup
+
+---
+## Repository Structure & Details (Auto-generated)
+
+### Scopo
+Modulo standard AWS Backup (`aws_backup_plan`, `aws_backup_vault`).
+
+### Script
+Nessuno.
+
 ## Requirements
 
 | Name | Version |
